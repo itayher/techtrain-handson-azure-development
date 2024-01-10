@@ -1,5 +1,11 @@
 {
     "recommendations": [
-        "ms-azuretools.azure-dev"
+        "ms-azuretools.azure-dev",
+        "ms-vscode-remote.remote-containers",
+        "azurite.azurite",
+        "ms-dotnettools.csdevkit",
+        "bencoleman.armview",
+        "durablefunctionsmonitor.durablefunctionsmonitor",
+        "mhutchie.git-graph"
     ]
 }
