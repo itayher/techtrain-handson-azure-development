@@ -200,6 +200,33 @@ module apimApi './app/apim-api.bicep' = if (useAPIM) {
   }
 }
 
+module userManagedIdentity './core/security/user-managed-identity.bicep' = {
+  name: 'msi-deployment'
+  scope: rg
+  params: {
+      location: location
+      name: '${abbrs.managedIdentityUserAssignedIdentities}${resourceToken}'
+  }
+}
+
+module eventHubRequests './core/messaging/eventhub.bicep' = {
+  name: 'eventhub-requests-deployment'
+  scope: rg
+  params: {
+      location: location
+      workspaceId: monitoring.outputs.logAnalyticsWorkspaceId
+      eventHubNamespaceName: '${abbrs.eventHubNamespaces}${resourceToken}'
+      eventHubName: '${abbrs.eventHubNamespacesEventHubs}${resourceToken}'
+      roleAssignments: [
+          {
+              principalType: 'ServicePrincipal'
+              roleDefinitionId: 'a638d3c7-ab3a-418d-83e6-5f17a39d4fde' // Azure Event Hubs Data Receiver
+              principalId: userManagedIdentity.outputs.properties.principalId
+          }
+      ]
+  }
+}
+
 // Data outputs
 output AZURE_COSMOS_ENDPOINT string = cosmos.outputs.endpoint
 output AZURE_COSMOS_CONNECTION_STRING_KEY string = cosmos.outputs.connectionStringKey
